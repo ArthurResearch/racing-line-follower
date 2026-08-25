@@ -2,8 +2,8 @@
 //PrograENAdor: Evandro Cantu
  
 //Veriáveis para sensores de linha e velocidade
-int     sensorEsq, sensorLinha, sensorDir;
-int     velMin = 300, velMed = 680, velENAx = 1023; //Velocidades dos motores
+int     sensorMEsq, sensorEsq, sensorLinha, sensorDir, sensorMDir;
+int     velMin = 100, velMed = 100, velENAx = 100; //Velocidades dos motores -- de 0 a 255
 int     limiar = 600; //limiar do sensor de luz - acima de 600: preto, abaixo de 600: branco
 
 //Variáveis para sensores de início e fim de pista
@@ -31,7 +31,13 @@ void setup(){
   pinMode(IN3, OUTPUT);  
   pinMode(IN4, OUTPUT);
   pinMode(ENA,  OUTPUT);  
-  pinMode(ENB,  OUTPUT);  
+  pinMode(ENB,  OUTPUT); 
+
+  pinMode(A0, INPUT);
+  pinMode(A3, INPUT);
+  pinMode(A5, INPUT); 
+
+  Serial.begin(9600);
   
 }
 
@@ -51,17 +57,28 @@ void vira_esquerda(int vel) {
   analogWrite(ENA, vel);
   digitalWrite(IN1, LOW);  //A 
   digitalWrite(IN2, HIGH); //A  
+  
   //MotorB_tras 
-  analogWrite(ENB, vel);   
-  digitalWrite(IN3, HIGH); //B
-  digitalWrite(IN4, LOW);  //B   
+  //analogWrite(ENB, vel);   
+  //digitalWrite(IN3, HIGH); //B
+  //digitalWrite(IN4, LOW);  //B
+
+  //MotorB_para 
+  digitalWrite(IN3, HIGH);  //B
+  digitalWrite(IN4, HIGH);  //B   
 }
 
 void vira_direita(int vel) {
   //MotorA_tras
-  analogWrite(ENA, vel);
+  //analogWrite(ENA, vel);
+  //digitalWrite(IN1, HIGH);  //A 
+  //digitalWrite(IN2, LOW); //A  
+  
+  //MotorA_parar
   digitalWrite(IN1, HIGH);  //A 
-  digitalWrite(IN2, LOW); //A  
+  digitalWrite(IN2, HIGH);  //A  
+  
+  
   //MotorB_frente 
   analogWrite(ENB, vel);   
   digitalWrite(IN3, LOW); //B
@@ -78,7 +95,6 @@ void para_motores() {
 }
 
 void segueLinha(){  
-
 
 
   //le os sensores
