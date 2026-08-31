@@ -2,8 +2,8 @@
 //PrograENAdor: Evandro Cantu
  
 //Veriáveis para sensores de linha e velocidade
-int     sensorMEsq, sensorEsq, sensorLinha, sensorDir, sensorMDir;
-int     velMin = 100, velMed = 100, velENAx = 100; //Velocidades dos motores -- de 0 a 255
+int     sensorDD, sensorDM, sensorMD, sensorME, sensorEM, sensorEE
+int     velMin = 100, velMed = 140, velENAx = 165; //Velocidades dos motores -- de 0 a 255
 int     limiar = 600; //limiar do sensor de luz - acima de 600: preto, abaixo de 600: branco
 
 //Variáveis para sensores de início e fim de pista
@@ -15,11 +15,11 @@ long    tempoExtra = 2000; //Tempo extra para seguir linha
 
 
 //Definicoes pinos Arduino ligados a entrada da Ponte H
-int ENA = 5; //Motor direito
+int ENA = 5; //Motor esquerdo
 int IN1 = 7;
 int IN2 = 6;
 
-int ENB = 3; //Motor esquerdo
+int ENB = 3; //Motor direito
 int IN3 = 4;
 int IN4 = 2;
 
@@ -34,7 +34,10 @@ void setup(){
   pinMode(ENB,  OUTPUT); 
 
   pinMode(A0, INPUT);
+  pinMode(A1, INPUT);
+  pinMode(A2, INPUT);
   pinMode(A3, INPUT);
+  pinMode(A4, INPUT);
   pinMode(A5, INPUT); 
 
   Serial.begin(9600);
@@ -46,43 +49,34 @@ void para_frente(int vel) {
   analogWrite(ENA, vel);   
   analogWrite(ENB, vel);   
   //Aciona o motores 
-  digitalWrite(IN1, LOW);  //A 
-  digitalWrite(IN2, HIGH); //A
-  digitalWrite(IN3, LOW);  //B
-  digitalWrite(IN4, HIGH); //B   
+  digitalWrite(IN1, LOW);  //E 
+  digitalWrite(IN2, HIGH); //E
+  digitalWrite(IN3, LOW);  //D
+  digitalWrite(IN4, HIGH); //D
 }
 
 void vira_esquerda(int vel) {
   //MotorA_frente
   analogWrite(ENA, vel);
-  digitalWrite(IN1, LOW);  //A 
-  digitalWrite(IN2, HIGH); //A  
-  
-  //MotorB_tras 
-  //analogWrite(ENB, vel);   
-  //digitalWrite(IN3, HIGH); //B
-  //digitalWrite(IN4, LOW);  //B
+  digitalWrite(IN1, LOW);  //E 
+  digitalWrite(IN2, HIGH); //E  
 
   //MotorB_para 
-  digitalWrite(IN3, HIGH);  //B
-  digitalWrite(IN4, HIGH);  //B   
+  digitalWrite(IN3, HIGH);  //D
+  digitalWrite(IN4, HIGH);  //D   
 }
 
 void vira_direita(int vel) {
-  //MotorA_tras
-  //analogWrite(ENA, vel);
-  //digitalWrite(IN1, HIGH);  //A 
-  //digitalWrite(IN2, LOW); //A  
-  
+
   //MotorA_parar
-  digitalWrite(IN1, HIGH);  //A 
-  digitalWrite(IN2, HIGH);  //A  
+  digitalWrite(IN1, HIGH);  //E 
+  digitalWrite(IN2, HIGH);  //E  
   
   
   //MotorB_frente 
   analogWrite(ENB, vel);   
-  digitalWrite(IN3, LOW); //B
-  digitalWrite(IN4, HIGH);  //B   
+  digitalWrite(IN3, LOW); //D
+  digitalWrite(IN4, HIGH);  //D   
 }
 
 void para_motores() {
@@ -98,10 +92,12 @@ void segueLinha(){
 
 
   //le os sensores
-  sensorDir   = analogRead(A0); 
-  sensorLinha = analogRead(A3);
-  sensorEsq   = analogRead(A5);
-  //sensorFim   = analogRead(3);
+  sensorEE = analogRead(A0);
+  sensorEM = analogRead(A1);
+  sensorME = analogRead(A2);
+  sensorMD = analogRead(A3);
+  sensorDM = analogRead(A4);
+  sensorDD = analogRead(A5);
 
   //Se estiver na linha segue em frente 
   if (sensorLinha < limiar){
