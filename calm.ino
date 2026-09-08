@@ -2,8 +2,8 @@
 //PrograENAdor: Evandro Cantu
  
 //Veriáveis para sensores de linha e velocidade
-int     sensorDD, sensorDM, sensorMD, sensorME, sensorEM, sensorEE
-int     velMin = 100, velMed = 140, velENAx = 165; //Velocidades dos motores -- de 0 a 255
+int     sensorDD, sensorDM, sensorMD, sensorME, sensorEM, sensorEE;
+int     velMin = 100, velMed = 120, velENAx = 185; //Velocidades dos motores -- de 0 a 255
 int     limiar = 600; //limiar do sensor de luz - acima de 600: preto, abaixo de 600: branco
 
 //Variáveis para sensores de início e fim de pista
@@ -59,24 +59,24 @@ void vira_esquerda(int vel) {
   //MotorA_frente
   analogWrite(ENA, vel);
   digitalWrite(IN1, LOW);  //E 
-  digitalWrite(IN2, HIGH); //E  
+  digitalWrite(IN2, LOW); //E  
 
   //MotorB_para 
-  digitalWrite(IN3, HIGH);  //D
+  digitalWrite(IN3, LOW);  //D
   digitalWrite(IN4, HIGH);  //D   
 }
 
 void vira_direita(int vel) {
 
   //MotorA_parar
-  digitalWrite(IN1, HIGH);  //E 
+  digitalWrite(IN1, LOW);  //E 
   digitalWrite(IN2, HIGH);  //E  
   
   
   //MotorB_frente 
   analogWrite(ENB, vel);   
   digitalWrite(IN3, LOW); //D
-  digitalWrite(IN4, HIGH);  //D   
+  digitalWrite(IN4, LOW);  //D   
 }
 
 void para_motores() {
@@ -100,19 +100,19 @@ void segueLinha(){
   sensorDD = analogRead(A5);
 
   //Se estiver na linha segue em frente 
-  if (sensorLinha < limiar){
+  if (sensorME < limiar && sensorMD < limiar){
     Serial.println("para_frente");
     para_frente(velENAx);    
   }
  
   //Se sensorDir acha linha vire para a direita
-  if (sensorDir < limiar && sensorLinha > limiar){
+  if (sensorEM < limiar && sensorEE < limiar && sensorME > limiar && sensorMD > limiar){
     Serial.println("para_direita");
     vira_direita(velMed);
   }
- 
+
   //Se sensorEsq acha linha vire para a esquerda
-  if (sensorEsq < limiar && sensorLinha > limiar){
+  if (sensorDM < limiar && sensorDD < limiar && sensorME > limiar && sensorMD > limiar){
     Serial.println("para_esquerda");
     vira_esquerda(velMed);
   }
