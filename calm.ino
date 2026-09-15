@@ -1,28 +1,32 @@
 //Variáveis para sensores de linha e velocidade
-int sensorDD, sensorDM, sensorMD, sensorME, sensorEM, sensorEE; // Sensores - D = Direita, E = Esquerda
-int velMin = 70, velMed = 120, velENAx = 185; // Velocidade dos motores - 0 a 255
+
+int sensorDD, sensorDM, sensorMD, sensorME, sensorEM, sensorEE; // Sensores - D = Direita, M = Meio, E = Esquerda
+int velMin = 70, velMed = 120, velMax = 185; // Velocidade dos motores - 0 a 255
 int limiar = 600; // Limiar do sensor de luz - acima de 600 = preto, abaixo de 600 = branco
 
 //Variáveis para sensores de início e fim de pista
+
 int sensorFim; // Detecta o fim do percurso
 int contaFim = 4; // Conta cada marca do percurso
-boolean flagFim = false; 
-long tempoTotal; //Tempo total da volta
-long tempoExtra = 2000; //Tempo extra para seguir linha
+boolean flagFim = false; // Conta uma vez só ao invés de contar a todo momento que estiver em cima da marca
+long tempoTotal; // Detecta tempo desde que o arduino foi ligado
+long tempoExtra = 2000; // Tempo extra para funcionar depois da última marca do percurso
 
+// Definições dos pinos do Arduino ligados a entrada da Ponte H
 
-//Definicoes pinos Arduino ligados a entrada da Ponte H
-int ENA = 5; //Motor esquerdo
+// Motor Esquerdo
+int ENA = 5;
 int IN1 = 7;
 int IN2 = 6;
 
-int ENB = 3; //Motor direito
+// Motor Direito
+int ENB = 3;
 int IN3 = 4;
 int IN4 = 2;
 
+// Define os pinos como saida e como entrada
+
 void setup(){
-  
-  //Define os pinos como saida  
   pinMode(IN1, OUTPUT);  
   pinMode(IN2, OUTPUT);  
   pinMode(IN3, OUTPUT);  
@@ -38,54 +42,50 @@ void setup(){
   pinMode(A5, INPUT); 
 
   Serial.begin(9600);
-  
 }
 
-void para_frente(int vel) {
+void paraFrente(int vel) {
   //Configura velocidade dos motores
-  analogWrite(ENA, vel);   
-  analogWrite(ENB, vel);   
-  //Aciona o motores 
-  digitalWrite(IN1, LOW);  //E 
+  analogWrite(ENA, vel);
+  analogWrite(ENB, vel);
+
+  //Aciona o motores
+  digitalWrite(IN1, LOW); //E 
   digitalWrite(IN2, HIGH); //E
-  digitalWrite(IN3, LOW);  //D
+  digitalWrite(IN3, LOW); //D
   digitalWrite(IN4, HIGH); //D
 }
 
-void vira_esquerda(int vel) {
-
-  //MotorA_frente
+void viraEsquerda(int velE, int velD) {
   analogWrite(ENA, vel);
-  digitalWrite(IN1, LOW);  //E 
-  digitalWrite(IN2, HIGH); //E  
+  analogWrite(ENB, vel);
 
-  //MotorB_para_tras
-  //analogWrite(ENB, vel); 
-  digitalWrite(IN3, LOW);  //D
-  digitalWrite(IN4, LOW);  //D   
+  // Motor Esquerdo < Motor Direito (Virar Esquerda)
+  digitalWrite(IN1, LOW); //E 
+  digitalWrite(IN2, LOW); //E
+  digitalWrite(IN3, LOW); //D
+  digitalWrite(IN4, HIGH); //D
 }
 
-void vira_direita(int vel) {
+void viraDireita(int velE, int velD) {
+  analogWrite(ENA, velE);
+  analogWrite(ENB, velD);
 
-  //MotorA_parar
-  //analogWrite(ENA, velMin);
-  digitalWrite(IN1, LOW);  //E 
-  digitalWrite(IN2, LOW);  //E  
-  
-  
-  //MotorB_frente 
-  analogWrite(ENB, vel);   
+  // Motor Direito < Motor Esquerdo (Virar Direita)
+  digitalWrite(IN1, LOW); //E 
+  digitalWrite(IN2, HIGH); //E
   digitalWrite(IN3, LOW); //D
-  digitalWrite(IN4, HIGH);  //D   
+  digitalWrite(IN4, LOW); //D
 }
 
 void para_motores() {
-  //MotorA_para
-  digitalWrite(IN1, HIGH);  //A 
-  digitalWrite(IN2, HIGH);  //A  
-  //MotorB_para 
-  digitalWrite(IN3, HIGH);  //B
-  digitalWrite(IN4, HIGH);  //B   
+  // Motor Esquerdo para
+  digitalWrite(IN1, HIGH); //E
+  digitalWrite(IN2, HIGH); //E
+
+  // Motor Direito para
+  digitalWrite(IN3, HIGH); //D
+  digitalWrite(IN4, HIGH);//D
 }
 
 void segueLinha(){  
