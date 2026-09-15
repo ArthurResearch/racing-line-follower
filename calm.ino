@@ -44,103 +44,67 @@ void setup(){
   Serial.begin(9600);
 }
 
-void paraFrente(int vel) {
-  //Configura velocidade dos motores
-  analogWrite(ENA, vel);
-  analogWrite(ENB, vel);
+// Controle dos motores
 
-  //Aciona o motores
-  digitalWrite(IN1, LOW); //E 
-  digitalWrite(IN2, HIGH); //E
-  digitalWrite(IN3, LOW); //D
-  digitalWrite(IN4, HIGH); //D
-}
-
-void viraEsquerda(int velE, int velD) {
-  analogWrite(ENA, vel);
-  analogWrite(ENB, vel);
-
-  // Motor Esquerdo < Motor Direito (Virar Esquerda)
-  digitalWrite(IN1, LOW); //E 
-  digitalWrite(IN2, LOW); //E
-  digitalWrite(IN3, LOW); //D
-  digitalWrite(IN4, HIGH); //D
-}
-
-void viraDireita(int velE, int velD) {
+void controlaMotores(int velE, int velD) {
   analogWrite(ENA, velE);
   analogWrite(ENB, velD);
 
-  // Motor Direito < Motor Esquerdo (Virar Direita)
-  digitalWrite(IN1, LOW); //E 
-  digitalWrite(IN2, HIGH); //E
-  digitalWrite(IN3, LOW); //D
-  digitalWrite(IN4, LOW); //D
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
 }
 
-void para_motores() {
+void paraMotores() {
   // Motor Esquerdo para
   digitalWrite(IN1, HIGH); //E
   digitalWrite(IN2, HIGH); //E
 
   // Motor Direito para
   digitalWrite(IN3, HIGH); //D
-  digitalWrite(IN4, HIGH);//D
+  digitalWrite(IN4, HIGH); //D
 }
 
-void segueLinha(){  
-
-  //le os sensores
-  sensorDir   = analogRead(A1); //Sensor 7
-  
-  sensorLinhaD = analogRead(A2); //Sensor 5
-  sensorLinhaE = analogRead(A3); //Sensor 4
-  
-  sensorEsq   = analogRead(A4); //Sensor 2
-
-  /*
+void segueLinha(){
   sensorEE = analogRead(A0);
   sensorEM = analogRead(A1);
   sensorME = analogRead(A2);
   sensorMD = analogRead(A3);
   sensorDM = analogRead(A4);
   sensorDD = analogRead(A5);
-  */
 
-  //Se estiver na linha segue em frente 
-  //if (sensorME < limiar && sensorMD < limiar){
-  if (sensorLinhaE < limiar || sensorLinhaD < limiar){
-    Serial.println("para_frente");
-    para_frente(velMed);    
+  if (/* esquerda forte */) {
+    controlaMotores(velMin, velMax);
   }
- 
-  //Se sensorDir acha linha vire para a direita
-  //if (sensorEM < limiar && sensorEE < limiar && sensorME > limiar && sensorMD > limiar){
-  if (sensorDir < limiar && sensorLinhaD > limiar){
-    //Serial.println("para_direita");
-    //vira_direita(velMed);
-    Serial.println("para_esquerda");
-    vira_esquerda(velMed);
+  else if (/* direita forte*/) {
+    controlaMotores(velMax, velMin);
   }
-
-  //Se sensorEsq acha linha vire para a esquerda
-  //if (sensorDM < limiar && sensorDD < limiar && sensorME > limiar && sensorMD > limiar){
-  if (sensorEsq < limiar && sensorLinhaE > limiar){
-    //Serial.println("para_esquerda");
-    //vira_esquerda(velMed);
-    Serial.println("para_direita");
-    vira_direita(velMed);
+  else if (/* esquerda */) {
+    controlaMotores(velMed, velMax);
+  }
+  else if (/* direita */) {
+    controlaMotores(velMax, velMed);
+  }
+  else if (/* centro */) {
+    controlaMotores(velMax, velMax);
   }
 
-  
+  // Teste dos sensores
   /*
-  //TESTE MOTORES
-  para_frente(velENAx);
-  delay(2000);
-  vira_direita(velMed);
-  delay(2000);
-  vira_esquerda(velMed);
-  delay(2000);
+  Serial.print(sensorEE);
+  Serial.print(" ");
+  Serial.print(sensorEM);
+  Serial.print(" ");
+  Serial.print(sensorME);
+  Serial.print(" ");
+  Serial.print(sensorMD);
+  Serial.print(" ");
+  Serial.print(sensorDM);
+  Serial.print(" ");
+  Serial.println(sensorDD);
+
+  delay(100);
   */
 }
  
@@ -157,17 +121,16 @@ void loop(){
        contaFim--;
     }
     */
-
-    delay(200);
   }
 
  //Segue linha por ENAis 2 segundos antes de parar
  tempoTotal = millis();
- while((millis() - tempoTotal) < tempoExtra)
+ while((millis() - tempoTotal) < tempoExtra) {
    segueLinha();
+}
 
  //Pára motores
- para_motores();
+ paraMotores();
 
  //Espera 10s
  delay(10000);
