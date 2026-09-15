@@ -1,18 +1,14 @@
-//Componentes: Ponte H L298D e sensor InfraRed
-//PrograENAdor: Evandro Cantu
- 
-//Veriáveis para sensores de linha e velocidade
-//int     sensorDD, sensorDM, sensorMD, sensorME, sensorEM, sensorEE;
-int     sensorMEsq, sensorEsq, sensorLinhaD, sensorLinhaE, sensorDir, sensorMDir;
-int     velMin = 70, velMed = 120, velENAx = 185; //Velocidades dos motores -- de 0 a 255
-int     limiar = 600; //limiar do sensor de luz - acima de 600: preto, abaixo de 600: branco
+//Variáveis para sensores de linha e velocidade
+int sensorDD, sensorDM, sensorMD, sensorME, sensorEM, sensorEE; // Sensores - D = Direita, E = Esquerda
+int velMin = 70, velMed = 120, velENAx = 185; // Velocidade dos motores - 0 a 255
+int limiar = 600; // Limiar do sensor de luz - acima de 600 = preto, abaixo de 600 = branco
 
 //Variáveis para sensores de início e fim de pista
-int     sensorFim;
-int     contaFim = 4; //Conta ENArcas de início, fim e cruzamentos
+int sensorFim; // Detecta o fim do percurso
+int contaFim = 4; // Conta cada marca do percurso
 boolean flagFim = false; 
-long    tempoTotal; //Tempo total da volta
-long    tempoExtra = 2000; //Tempo extra para seguir linha
+long tempoTotal; //Tempo total da volta
+long tempoExtra = 2000; //Tempo extra para seguir linha
 
 
 //Definicoes pinos Arduino ligados a entrada da Ponte H
